@@ -15,11 +15,46 @@ const generateToken = (id) => {
 // Reister user and sign in
 
 const register = async (req, res) => {
-  res.send("Registro");
+  const { name, email, password } = req.body;
+
+  //check if user exists
+  const user = await User.findOne({ email }); //A função findOne retorna o primeiro usuário encontrado que corresponda aos critérios de busca. Essa busca é feita com base no valor da propriedade email.
+
+  if (user) {
+    res.status(422).json({ errors: ["Por favor, utilize outro E-mail."] });
+    return;
+  }
+  //generate passwordhash
+  const salt = await bcrypt.genSalt();
+  const passwordHash = await bcrypt.hash(password, salt);
+
+  //create user
+
+  const newUser = await User.create({
+    name,
+    email,
+    password: passwordHash,
+  });
+  //if user was created sussfull, retunr tken
+  if (!newUser) {
+    res.status(422).json({
+      errors: "Erro ao criar conta. Por favor tente mais tarde",
+    });
+    return;
+  }
+  res.status(201).json({
+    _id: newUser._id,
+    token: generateToken(newUser._id),
+  });
+};
+//Sign user in
+const login = (req, res) => {
+  res.send("login");
 };
 
 module.exports = {
   register,
+  login,
 };
 
 //const User = require("../models/User");: Aqui estamos importando o módulo User de um arquivo chamado "User.js" localizado em uma pasta "../models".

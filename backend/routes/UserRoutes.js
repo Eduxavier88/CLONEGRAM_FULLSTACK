@@ -1,12 +1,16 @@
 const express = require("express");
 const router = express.Router();
 //controller
-const { register } = require("../controllers/UserController");
+const { register, login } = require("../controllers/UserController");
 //middlewares
 const validate = require("../middlewares/HandleValidation");
-const { userCreateValidation } = require("../middlewares/UserValidation");
+const {
+  userCreateValidation,
+  loginValidation,
+} = require("../middlewares/UserValidation");
 //Routes
 router.post("/register", userCreateValidation(), validate, register);
+router.post("/login", loginValidation(), validate, login);
 
 module.exports = router;
 //(req, res) => { ... }: Essa é a função que será executada quando alguém acessar a rota definida anteriormente.
