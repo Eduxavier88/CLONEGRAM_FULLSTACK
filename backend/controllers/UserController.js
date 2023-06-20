@@ -48,13 +48,37 @@ const register = async (req, res) => {
   });
 };
 //Sign user in
-const login = (req, res) => {
-  res.send("login");
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  //verificando se o usuario existe
+  const user = await User.findOne({ email });
+  if (!user) {
+    res.status(404).json({ errors: ["O usuário não existe"] });
+    return;
+  }
+  //check if matches ´passoword
+  if (!bcrypt.compare(password, user.password)) {
+    res.status(422).json({ errors: ["Senha invalida"] });
+    return;
+  }
+  //return user with token
+  res.status(201).json({
+    _id: user._id,
+    profileImage: user.profileImage,
+    token: generateToken(user._id),
+  });
+};
+//Get current logged in user
+
+const getCurrentUser = async (req, res) => {
+  const user = req.user;
+  res.status(200).json(user);
 };
 
 module.exports = {
   register,
   login,
+  getCurrentUser,
 };
 
 //const User = require("../models/User");: Aqui estamos importando o módulo User de um arquivo chamado "User.js" localizado em uma pasta "../models".
