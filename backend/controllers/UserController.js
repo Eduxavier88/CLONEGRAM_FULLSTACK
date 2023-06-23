@@ -39,7 +39,7 @@ const register = async (req, res) => {
   //if user was created sussfull, retunr tken
   if (!newUser) {
     res.status(422).json({
-      errors: "Erro ao criar conta. Por favor tente mais tarde",
+      errors: ["Erro ao criar conta. Por favor tente mais tarde"],
     });
     return;
   }
@@ -128,7 +128,7 @@ const getUserById = async (req, res) => {
     }
     res.status(200).json(user);
   } catch (error) {
-    res.status(404).json({ errors: ["Usuário não encontrado!2"] });
+    res.status(422).json({ errors: ["Usuário não encontrado!"] });
     return;
   }
 };
